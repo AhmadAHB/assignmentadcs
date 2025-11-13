@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ADCS Assignment</title>
+  <style>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+   <style>
+   body {
+      background-color: #0f172a;
+      font-family: Arial, sans-serif;
+      color: white;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-box {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      width: 300px;
+      text-align: center;
+    }
+    input {
+      width: 90%;
+      padding: 8px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2563eb;
+    }
+    .msg {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    /* Hide ADCS page until login success */
+    #mainContent { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN BOX -->
+  <div class="login-box" id="loginBox">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username" /><br>
+    <input type="password" id="password" placeholder="Password" /><br>
+    <button onclick="login()">Login</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <!-- ADCS PAGE CONTENT -->
+  <div id="mainContent">
+  <title>ADCS Assignment</title>
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#0b1221;
+      --card: rgba(255,255,255,0.06);
+      --accent:#ff3b3b;
+      --gold:#ffd54a;
+      --glass: rgba(255,255,255,0.06);
+      --text:#e6eef8;
+    }
+    html,body{height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    body{
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(102,126,234,0.15), transparent 8%),
+                  radial-gradient(1200px 600px at 90% 90%, rgba(99,102,241,0.12), transparent 8%),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    header{
+      text-align:center;
+      padding:36px 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      position:sticky;
+      top:0;
+      backdrop-filter: blur(6px);
+      z-index:5;
+    }
+    header h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:1px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+    }
+    header p{margin:6px 0 0; opacity:0.8; font-size:14px;}
+    .container{
+      max-width:1100px;
+      margin:28px auto;
+      padding:18px;
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+      gap:20px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-radius:14px;
+      padding:18px;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: transform .24s ease, box-shadow .24s;
+      text-align:center;
+    }
+    .card:hover{ transform: translateY(-8px); box-shadow: 0 18px 40px rgba(2,6,23,0.65);}
+
+    .pdf-icon{
+      width:78px;
+      height:78px;
+      margin: 0 auto 10px;
+      display:block;
+    }
+
+    .subject{
+      font-size:18px;
+      margin:6px 0;
+      font-weight:600;
+    }
+
+    .btn{
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      padding:10px 16px;
+      border-radius:999px;
+      background: linear-gradient(90deg,#ffd54a,#ffb74d);
+      color:#111;
+      text-decoration:none;
+      font-weight:700;
+      box-shadow: 0 6px 18px rgba(255,181,71,0.12);
+      border:none;
+      cursor:pointer;
+    }
+    .btn.secondary{
+      background: transparent;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,0.06);
+      padding:8px 12px;
+      border-radius:10px;
+      font-weight:600;
+    }
+
+    footer{ text-align:center; padding:18px; opacity:0.7; font-size:13px; margin-top:20px;}
+
+    /* Modal */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(2,6,23,0.6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s ease;
+    }
+    .modal-backdrop.show{ opacity:1; pointer-events:auto; }
+
+    .modal{
+      width: 92%;
+      max-width:760px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;
+      padding:18px;
+      border:1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 20px 60px rgba(2,6,23,0.7);
+    }
+    .modal header{ display:flex; align-items:center; gap:12px; justify-content:space-between; padding:0; background:transparent;}
+    .modal h3{ margin:0; font-size:18px; }
+    .close-btn{ background:transparent; border:0; color:var(--text); font-size:18px; cursor:pointer; opacity:0.85;}
+    .pdf-list{ margin-top:14px; display:grid; gap:12px; }
+    .pdf-item{
+      display:flex; gap:12px; align-items:center;
+      padding:10px;
+      border-radius:10px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .pdf-thumb{ width:56px; height:72px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .pdf-meta{ flex:1; }
+    .pdf-meta b{ display:block; }
+    .pdf-actions{ display:flex; gap:8px; align-items:center; }
+    .small-btn{
+      padding:8px 12px; border-radius:8px; border:0; font-weight:700; cursor:pointer;
+    }
+    .open-btn{ background:linear-gradient(90deg,#4fc3f7,#4dd0e1); color:#042; }
+    .download-btn{ background:linear-gradient(90deg,#b39ddb,#9575cd); color:#111; }
+
+    @media (max-width:560px){
+      header h1{ font-size:20px; }
+      .pdf-icon{ width:64px; height:64px; }
+    }
+
+    .muted{ color:rgba(255,255,255,0.65); font-size:13px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ADCS Assignment</h1>
+    <p>Click a subject to see available PDFs by authors.</p>
+  </header>
+
+  <main class="container">
+    <!-- Cards without price -->
+    <div class="card" data-subject="Programming Fundamentals">
+      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#e53935"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+      <div class="subject">Programming Fundamentals</div>
+      <button class="btn" data-action="open">View PDF</button>
+    </div>
+
+    <div class="card" data-subject="Digital Logic Design (DLD)">
+      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#d32f2f"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+      <div class="subject">Digital Logic Design (DLD)</div>
+      <button class="btn" data-action="open">View PDF</button>
+    </div>
+
+    <div class="card" data-subject="English">
+      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#c62828"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+      <div class="subject">English</div>
+      <button class="btn" data-action="open">View PDF</button>
+    </div>
+
+    <div class="card" data-subject="Pakistan Ideology & Constitution">
+      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#b71c1c"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+      <div class="subject">Pakistan Ideology & Constitution</div>
+      <button class="btn" data-action="open">View PDF</button>
+    </div>
+  </main>
+
+  <footer>© 2025 ADCS Assignment • Replace placeholders with your actual PDF file URLs</footer>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <header>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#e53935"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+          <div>
+            <h3 id="modalTitle">Subject PDFs</h3>
+            <div class="muted" id="modalSubtitle">Select a PDF to open or download</div>
+          </div>
+        </div>
+        <div>
+          <button class="close-btn" id="closeModal">✕</button>
+        </div>
+      </header>
+
+      <div class="pdf-list" id="pdfList"></div>
+
+      <div style="margin-top:14px; text-align:right;">
+        <button class="btn secondary" id="closeModal2">Close</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Allowed users
+    const users = {
+      "ahmad": "12345",
+      "admin": "adminpass",
+      "guest": "guest123"
+    };
+
+    function login() {
+      const user = document.getElementById("username").value.trim().toLowerCase();
+      const pass = document.getElementById("password").value.trim();
+      const msg = document.getElementById("msg");
+
+      if (users[user] && users[user] === pass) {
+        msg.style.color = "lightgreen";
+        msg.textContent = "✅ Login successful!";
+
+        // Show main content and hide login box
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("mainContent").style.display = "block";
+      } else {
+        msg.style.color = "red";
+        msg.textContent = "❌ Invalid username or password";
+      }
+    }
+  </script>
+
+  <script>
+    const pdfDatabase = {
+      "Programming Fundamentals":[
+        {author:"Ahmad", url:"pdfs/programming_ahmad.pdf"},
+        {author:"Jozza", url:"pdfs/programming_jozza.pdf"},
+        {author:"Zarnana", url:"pdfs/programming_zarnana.pdf"},
+        {author:"Ayesha", url:"pdfs/programming_ayesha.pdf"},
+      ],
+      "Digital Logic Design (DLD)":[
+        {author:"Ahmad", url:"pdfs/dld_ahmad.pdf"},
+        {author:"Jozza", url:"pdfs/dld_jozza.pdf"},
+        {author:"Zarnana", url:"pdfs/dld_zarnana.pdf"},
+        {author:"Ayesha", url:"pdfs/dld_ayesha.pdf"},
+      ],
+      "English":[
+        {author:"Ahmad", url:"pdfs/english_ahmad.pdf"},
+        {author:"Jozza", url:"pdfs/english_jozza.pdf"},
+        {author:"Zarnana", url:"pdfs/english_zarnana.pdf"},
+        {author:"Ayesha", url:"pdfs/english_ayesha.pdf"},
+      ],
+      "Pakistan Ideology & Constitution":[
+        {author:"Ahmad", url:"pdfs/pak_ahmad.pdf"},
+        {author:"Jozza", url:"pdfs/pak_jozza.pdf"},
+        {author:"Zarnana", url:"pdfs/pak_zarnana.pdf"},
+        {author:"Ayesha", url:"pdfs/pak_ayesha.pdf"},
+      ],
+    };
+
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const pdfList = document.getElementById('pdfList');
+    const modalTitle = document.getElementById('modalTitle');
+
+    function openModalFor(subject){
+      const records = pdfDatabase[subject] || [];
+      modalTitle.textContent = subject + " — Available PDFs";
+      pdfList.innerHTML = '';
+      records.forEach(rec => {
+        const item = document.createElement('div');
+        item.className = 'pdf-item';
+        const thumb = document.createElement('div');
+        thumb.className = 'pdf-thumb';
+        thumb.innerHTML = `<svg width="48" height="60" viewBox="0 0 24 24" fill="none">
+          <rect x="1" y="1" width="16" height="22" rx="2" fill="#d32f2f"></rect>
+          <text x="9" y="12" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text>
+        </svg>`;
+        const meta = document.createElement('div');
+        meta.className = 'pdf-meta';
+        meta.innerHTML = `<b>PDF by ${rec.author}</b>`;
+        const actions = document.createElement('div');
+        actions.className = 'pdf-actions';
+        const openBtn = document.createElement('a');
+        openBtn.className = 'small-btn open-btn';
+        openBtn.textContent = 'Open';
+        openBtn.href = rec.url; openBtn.target='_blank'; openBtn.rel='noopener';
+        const dlBtn = document.createElement('a');
+        dlBtn.className = 'small-btn download-btn';
+        dlBtn.textContent = 'Download';
+        dlBtn.href = rec.url; dlBtn.download=''; dlBtn.target='_blank'; dlBtn.rel='noopener';
+        actions.appendChild(openBtn); actions.appendChild(dlBtn);
+        item.appendChild(thumb); item.appendChild(meta); item.appendChild(actions);
+        pdfList.appendChild(item);
+      });
+      modalBackdrop.classList.add('show');
+    }
+
+    function closeModal(){ modalBackdrop.classList.remove('show'); }
+
+    document.querySelectorAll('.card').forEach(card=>{
+      const btn = card.querySelector('[data-action="open"]');
+      btn.addEventListener('click', ()=> openModalFor(card.getAttribute('data-subject')));
+    });
+
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('closeModal2').addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', (e)=>{ if(e.target===modalBackdrop) closeModal(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+</body>
+</html>
