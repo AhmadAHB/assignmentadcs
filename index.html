@@ -11,33 +11,38 @@
       font-family: Arial, sans-serif;
       color: white;
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 15px;
     }
     .login-box {
       background: #1e293b;
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      width: 300px;
+      width: 100%;
+      max-width: 400px;
       text-align: center;
     }
     input {
-      width: 90%;
-      padding: 8px;
+      width: calc(100% - 16px);
+      padding: 12px 8px;
       margin: 10px 0;
       border: none;
       border-radius: 6px;
+      font-size: 16px;
     }
     button {
-      padding: 10px 20px;
+      padding: 12px 24px;
       background-color: #3b82f6;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+      width: 100%;
     }
     button:hover {
       background-color: #2563eb;
@@ -64,7 +69,6 @@
 
   <!-- ADCS PAGE CONTENT -->
   <div id="mainContent">
-  <title>ADCS Assignment</title>
   <style>
     :root{
       --bg1:#0f172a;
@@ -75,7 +79,7 @@
       --glass: rgba(255,255,255,0.06);
       --text:#e6eef8;
     }
-    html,body{height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    html,body{min-height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
     body{
       background: radial-gradient(1200px 600px at 10% 10%, rgba(102,126,234,0.15), transparent 8%),
                   radial-gradient(1200px 600px at 90% 90%, rgba(99,102,241,0.12), transparent 8%),
@@ -87,7 +91,7 @@
 
     header{
       text-align:center;
-      padding:36px 18px;
+      padding:24px 18px;
       background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
       border-bottom: 1px solid rgba(255,255,255,0.03);
       position:sticky;
@@ -97,45 +101,46 @@
     }
     header h1{
       margin:0;
-      font-size:28px;
+      font-size:clamp(20px, 5vw, 28px);
       letter-spacing:1px;
       display:flex;
       gap:10px;
       align-items:center;
       justify-content:center;
     }
-    header p{margin:6px 0 0; opacity:0.8; font-size:14px;}
+    header p{margin:8px 0 0; opacity:0.8; font-size:clamp(13px, 3vw, 14px);}
     .container{
       max-width:1100px;
-      margin:28px auto;
+      margin:20px auto;
       padding:18px;
       display:grid;
-      grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
-      gap:20px;
+      grid-template-columns: repeat(auto-fit,minmax(min(100%, 280px),1fr));
+      gap:18px;
     }
 
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
       border-radius:14px;
-      padding:18px;
+      padding:20px 18px;
       box-shadow: 0 6px 18px rgba(2,6,23,0.6);
       border: 1px solid rgba(255,255,255,0.04);
       transition: transform .24s ease, box-shadow .24s;
       text-align:center;
     }
-    .card:hover{ transform: translateY(-8px); box-shadow: 0 18px 40px rgba(2,6,23,0.65);}
+    .card:hover{ transform: translateY(-4px); box-shadow: 0 18px 40px rgba(2,6,23,0.65);}
 
     .pdf-icon{
-      width:78px;
-      height:78px;
+      width:clamp(64px, 15vw, 78px);
+      height:clamp(64px, 15vw, 78px);
       margin: 0 auto 10px;
       display:block;
     }
 
     .subject{
-      font-size:18px;
-      margin:6px 0;
+      font-size:clamp(16px, 4vw, 18px);
+      margin:8px 0 12px;
       font-weight:600;
+      line-height: 1.3;
     }
 
     .btn{
@@ -143,7 +148,7 @@
       gap:10px;
       align-items:center;
       justify-content:center;
-      padding:10px 16px;
+      padding:12px 20px;
       border-radius:999px;
       background: linear-gradient(90deg,#ffd54a,#ffb74d);
       color:#111;
@@ -152,23 +157,26 @@
       box-shadow: 0 6px 18px rgba(255,181,71,0.12);
       border:none;
       cursor:pointer;
+      font-size:15px;
+      width: 100%;
+      max-width: 200px;
     }
     .btn.secondary{
       background: transparent;
       color:var(--text);
       border:1px solid rgba(255,255,255,0.06);
-      padding:8px 12px;
+      padding:10px 16px;
       border-radius:10px;
       font-weight:600;
     }
 
-    footer{ text-align:center; padding:18px; opacity:0.7; font-size:13px; margin-top:20px;}
+    footer{ text-align:center; padding:20px 18px; opacity:0.7; font-size:12px; margin-top:20px; line-height: 1.5;}
 
     /* Modal */
     .modal-backdrop{
       position:fixed;
       inset:0;
-      background: rgba(2,6,23,0.6);
+      background: rgba(2,6,23,0.7);
       display:flex;
       align-items:center;
       justify-content:center;
@@ -176,48 +184,114 @@
       opacity:0;
       pointer-events:none;
       transition:opacity .18s ease;
+      padding: 15px;
+      overflow-y: auto;
     }
     .modal-backdrop.show{ opacity:1; pointer-events:auto; }
 
     .modal{
-      width: 92%;
+      width: 100%;
       max-width:760px;
       background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
       border-radius:12px;
       padding:18px;
       border:1px solid rgba(255,255,255,0.04);
       box-shadow: 0 20px 60px rgba(2,6,23,0.7);
+      margin: auto;
     }
-    .modal header{ display:flex; align-items:center; gap:12px; justify-content:space-between; padding:0; background:transparent;}
-    .modal h3{ margin:0; font-size:18px; }
-    .close-btn{ background:transparent; border:0; color:var(--text); font-size:18px; cursor:pointer; opacity:0.85;}
+    .modal header{ 
+      display:flex; 
+      align-items:flex-start; 
+      gap:12px; 
+      justify-content:space-between; 
+      padding:0; 
+      background:transparent;
+      flex-wrap: wrap;
+    }
+    .modal h3{ margin:0; font-size:clamp(16px, 4vw, 18px); line-height: 1.3;}
+    .close-btn{ 
+      background:transparent; 
+      border:0; 
+      color:var(--text); 
+      font-size:24px; 
+      cursor:pointer; 
+      opacity:0.85;
+      padding: 4px 8px;
+      line-height: 1;
+      min-width: 32px;
+      min-height: 32px;
+    }
     .pdf-list{ margin-top:14px; display:grid; gap:12px; }
     .pdf-item{
-      display:flex; gap:12px; align-items:center;
-      padding:10px;
+      display:flex; 
+      gap:12px; 
+      align-items:center;
+      padding:12px;
       border-radius:10px;
       background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
       border:1px solid rgba(255,255,255,0.03);
+      flex-wrap: wrap;
     }
-    .pdf-thumb{ width:56px; height:72px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-    .pdf-meta{ flex:1; }
-    .pdf-meta b{ display:block; }
-    .pdf-actions{ display:flex; gap:8px; align-items:center; }
+    .pdf-thumb{ 
+      width:48px; 
+      height:60px; 
+      flex-shrink:0; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+    }
+    .pdf-meta{ flex:1; min-width: 120px;}
+    .pdf-meta b{ display:block; font-size: 14px; word-break: break-word;}
+    .pdf-actions{ 
+      display:flex; 
+      gap:8px; 
+      align-items:center;
+      flex-wrap: wrap;
+    }
     .small-btn{
-      padding:8px 12px; border-radius:8px; border:0; font-weight:700; cursor:pointer;
+      padding:10px 14px; 
+      border-radius:8px; 
+      border:0; 
+      font-weight:700; 
+      cursor:pointer;
+      font-size: 14px;
+      white-space: nowrap;
     }
     .open-btn{ background:linear-gradient(90deg,#4fc3f7,#4dd0e1); color:#042; }
     .download-btn{ background:linear-gradient(90deg,#b39ddb,#9575cd); color:#111; }
 
-    @media (max-width:560px){
-      header h1{ font-size:20px; }
-      .pdf-icon{ width:64px; height:64px; }
-    }
-
     .muted{ color:rgba(255,255,255,0.65); font-size:13px; }
+    
+    /* Mobile specific fixes */
+    @media (max-width:600px){
+      .container{
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 16px;
+      }
+      .card{
+        padding: 18px 16px;
+      }
+      .modal{
+        padding: 16px;
+        border-radius: 8px;
+      }
+      .pdf-item{
+        padding: 10px;
+      }
+      .pdf-actions{
+        width: 100%;
+        justify-content: flex-end;
+      }
+      .small-btn{
+        flex: 1;
+        min-width: 80px;
+      }
+      footer{
+        font-size: 11px;
+      }
+    }
   </style>
-</head>
-<body>
 
   <header>
     <h1>ADCS Assignment</h1>
@@ -257,9 +331,9 @@
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal">
       <header>
-        <div style="display:flex; gap:12px; align-items:center;">
-          <svg width="42" height="42" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#e53935"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
-          <div>
+        <div style="display:flex; gap:12px; align-items:flex-start; flex: 1;">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><rect x="3" y="2" width="14" height="20" rx="2" fill="#e53935"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+          <div style="flex: 1; min-width: 0;">
             <h3 id="modalTitle">Subject PDFs</h3>
             <div class="muted" id="modalSubtitle">Select a PDF to open or download</div>
           </div>
@@ -304,21 +378,36 @@
   </script>
 
   <script>
+    // Function to convert Google Drive folder links to viewable format
+    function convertDriveLink(url) {
+      // Check if it's a Google Drive folder link
+      if (url.includes('drive.google.com/drive/folders/')) {
+        // Extract folder ID
+        const match = url.match(/folders\/([a-zA-Z0-9_-]+)/);
+        if (match && match[1]) {
+          const folderId = match[1];
+          // Return folder view link that opens in browser
+          return `https://drive.google.com/embeddedfolderview?id=${folderId}#list`;
+        }
+      }
+      return url;
+    }
+
     const pdfDatabase = {
       "Programming Fundamentals":[
-        {author:"Admin", url:"pdfs/programming_ahmad.pdf"},
+        {author:"Admin", url:"https://drive.google.com/drive/folders/1Q9zJVfFYc0A8lrxAEpAiHf51DBQzawVx?usp=drive_link"},
         {author:"Jozza", url:"pdfs/programming_jozza.pdf"},
         {author:"Umer sarfaraz", url:"pdfs/programming_zarnana.pdf"},
         {author:"Volunteer", url:"pdfs/programming_ayesha.pdf"},
       ],
       "Digital Logic Design (DLD)":[
-        {author:"Admin", url:"pdfs/dld_ahmad.pdf"},
+        {author:"Admin", url:"https://drive.google.com/drive/folders/1PGj_PiELOaIeolmJ4KqDbedW0cFyuQ3b?usp=drive_link"},
         {author:"Jozza", url:"pdfs/dld_jozza.pdf"},
         {author:"Umer sarfaraz", url:"pdfs/dld_zarnana.pdf"},
         {author:"Volunteer", url:"pdfs/dld_ayesha.pdf"},
       ],
       "ICT":[
-        {author:"Admin", url:"pdfs/english_ahmad.pdf"},
+        {author:"Admin", url:"https://drive.google.com/drive/folders/1Ze6UhDptkGdJYlwkRFWaU6r_irID_4Mj?usp=drive_link"},
         {author:"Jozza", url:"pdfs/english_jozza.pdf"},
         {author:"Umer sarfaraz", url:"pdfs/english_zarnana.pdf"},
         {author:"Volunteer", url:"pdfs/english_ayesha.pdf"},
@@ -353,16 +442,29 @@
         meta.innerHTML = `<b>PDF by ${rec.author}</b>`;
         const actions = document.createElement('div');
         actions.className = 'pdf-actions';
-        const openBtn = document.createElement('a');
+        
+        // Convert Drive links before using them
+        const convertedUrl = convertDriveLink(rec.url);
+        
+        const openBtn = document.createElement('button');
         openBtn.className = 'small-btn open-btn';
         openBtn.textContent = 'Open';
-        openBtn.href = rec.url; openBtn.target='_blank'; openBtn.rel='noopener';
-        const dlBtn = document.createElement('a');
+        openBtn.onclick = function() {
+          window.location.href = convertedUrl;
+        };
+        
+        const dlBtn = document.createElement('button');
         dlBtn.className = 'small-btn download-btn';
         dlBtn.textContent = 'Download';
-        dlBtn.href = rec.url; dlBtn.download=''; dlBtn.target='_blank'; dlBtn.rel='noopener';
-        actions.appendChild(openBtn); actions.appendChild(dlBtn);
-        item.appendChild(thumb); item.appendChild(meta); item.appendChild(actions);
+        dlBtn.onclick = function() {
+          window.open(convertedUrl, '_blank', 'noopener');
+        };
+        
+        actions.appendChild(openBtn); 
+        actions.appendChild(dlBtn);
+        item.appendChild(thumb); 
+        item.appendChild(meta); 
+        item.appendChild(actions);
         pdfList.appendChild(item);
       });
       modalBackdrop.classList.add('show');
@@ -380,5 +482,6 @@
     modalBackdrop.addEventListener('click', (e)=>{ if(e.target===modalBackdrop) closeModal(); });
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
   </script>
+</div>
 </body>
 </html>
