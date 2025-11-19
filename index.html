@@ -323,9 +323,16 @@
       <div class="subject">Pakistan Ideology & Constitution</div>
       <button class="btn" data-action="open">View PDF</button>
     </div>
+
+    <!-- NEW SECTION ADDED HERE -->
+    <div class="card" data-subject="ADCS NEWS">
+      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#ad1457"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+      <div class="subject">ADCS NEWS</div>
+      <button class="btn" data-action="open">View PDF</button>
+    </div>
   </main>
 
-  <footer>© 2025 ADCS Assignment • Replace placeholders with your actual PDF file URLs</footer>
+  <footer>© 2025 ADCS Assignment • </footer>
 
   <!-- Modal -->
   <div class="modal-backdrop" id="modalBackdrop">
@@ -396,19 +403,19 @@
     const pdfDatabase = {
       "Programming Fundamentals":[
         {author:"Admin", url:"https://drive.google.com/drive/folders/1Q9zJVfFYc0A8lrxAEpAiHf51DBQzawVx?usp=drive_link"},
-        
       ],
       "Digital Logic Design (DLD)":[
         {author:"Admin", url:"https://drive.google.com/drive/folders/1PGj_PiELOaIeolmJ4KqDbedW0cFyuQ3b?usp=drive_link"},
-       
       ],
       "ICT":[
         {author:"Admin", url:"https://drive.google.com/drive/folders/1Ze6UhDptkGdJYlwkRFWaU6r_irID_4Mj?usp=drive_link"},
-     
       ],
       "Pakistan Ideology & Constitution":[
         {author:"Admin", url:"https://drive.google.com/drive/folders/1mml6ZOvISNPjpFvQZc7cJcPTi4bEIlQn?usp=sharing"},
-      
+      ],
+      // NEW SUBJECT ADDED HERE
+      "ADCS NEWS":[
+        {author:"Admin", url:"https://drive.google.com/drive/folders/19fHKIG0Q7BAnTiP9EebRnAidvBa99DqM?usp=sharing"},
       ],
     };
 
@@ -445,15 +452,7 @@
           window.location.href = convertedUrl;
         };
         
-        const dlBtn = document.createElement('button');
-        dlBtn.className = 'small-btn download-btn';
-        dlBtn.textContent = 'Download';
-        dlBtn.onclick = function() {
-          window.open(convertedUrl, '_blank', 'noopener');
-        };
-        
-        actions.appendChild(openBtn); 
-        actions.appendChild(dlBtn);
+        actions.appendChild(openBtn);
         item.appendChild(thumb); 
         item.appendChild(meta); 
         item.appendChild(actions);
