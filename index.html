@@ -4,475 +4,657 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ADCS Assignment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #07090f;
+      --bg2:     #0d1117;
+      --surface: #111827;
+      --border:  rgba(255,255,255,0.06);
+      --text:    #dde6f0;
+      --muted:   rgba(221,230,240,0.5);
+      --accent:  #3b82f6;
+      --gold:    #f0c040;
+      --green:   #22c55e;
+      --red:     #ef4444;
+      --amber:   #f59e0b;
+    }
+    html, body { min-height: 100%; font-family: 'Syne', system-ui, sans-serif; background: var(--bg); color: var(--text); }
 
-   <style>
-   body {
-      background-color: #0f172a;
-      font-family: Arial, sans-serif;
-      color: white;
-      margin: 0;
+    /* LOGIN */
+    #loginPage {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+      background: radial-gradient(ellipse 800px 500px at 20% 20%, rgba(59,130,246,0.08), transparent),
+                  radial-gradient(ellipse 600px 400px at 80% 80%, rgba(99,102,241,0.06), transparent), var(--bg);
+    }
+    .login-card {
+      width: 100%; max-width: 380px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 36px 32px; box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+    .login-card h2 { font-size: 22px; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; }
+    .login-card p  { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .login-card input {
+      width: 100%; padding: 12px 14px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); font-family: 'DM Mono', monospace; font-size: 14px;
+      margin-bottom: 12px; outline: none; transition: border-color .2s;
+    }
+    .login-card input:focus { border-color: var(--accent); }
+    .login-card button {
+      width: 100%; padding: 13px; background: var(--accent); color: #fff;
+      border: none; border-radius: 8px; font-family: 'Syne', sans-serif;
+      font-size: 15px; font-weight: 700; cursor: pointer; transition: background .2s, transform .1s; letter-spacing: .5px;
+    }
+    .login-card button:hover  { background: #2563eb; }
+    .login-card button:active { transform: scale(.98); }
+    #loginMsg { margin-top: 12px; font-size: 13px; text-align: center; min-height: 18px; }
+
+    /* APP */
+    #appPage { display: none; min-height: 100vh; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* HOME */
+    #homePage {
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(102,126,234,0.12), transparent 60%),
+                  radial-gradient(800px 600px at 90% 90%, rgba(99,102,241,0.10), transparent 60%),
+                  linear-gradient(180deg, #0f172a, #0b1221);
+    }
+    .app-header {
+      text-align: center; padding: 24px 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; backdrop-filter: blur(8px); z-index: 5;
+    }
+    .app-header h1 { font-size: clamp(18px,5vw,26px); font-weight: 800; letter-spacing: 1px; }
+    .app-header p  { font-size: 13px; color: var(--muted); margin-top: 5px; }
+    .cards-grid {
+      max-width: 1100px; margin: 28px auto; padding: 0 18px 40px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%,260px),1fr)); gap: 18px;
+    }
+    .card {
+      background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid var(--border); border-radius: 14px; padding: 22px 18px; text-align: center;
+      transition: transform .22s, box-shadow .22s; box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(0,0,0,0.55); }
+    .pdf-icon { width: 68px; height: 68px; margin: 0 auto 12px; display: block; }
+    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; line-height: 1.35; }
+    .card-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 11px 20px; border-radius: 999px;
+      background: linear-gradient(90deg,#ffd54a,#ffb74d);
+      color: #111; font-weight: 700; font-size: 14px; border: none; cursor: pointer;
+      width: 100%; max-width: 200px; transition: filter .2s;
+    }
+    .card-btn:hover { filter: brightness(1.08); }
+    .card-btn.deadline-btn { background: linear-gradient(90deg,#f87171,#fb923c); color:#fff; }
+
+    /* PDF MODAL */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(2,6,23,0.75);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 50; opacity: 0; pointer-events: none; transition: opacity .18s;
+      padding: 16px; overflow-y: auto;
+    }
+    .modal-backdrop.show { opacity: 1; pointer-events: auto; }
+    .modal {
+      width: 100%; max-width: 720px; background: #111827;
+      border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.7); margin: auto;
+    }
+    .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .modal-head h3 { font-size: clamp(15px,4vw,18px); font-weight: 700; }
+    .modal-head .muted { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .close-btn { background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; opacity: .7; padding: 2px 8px; }
+    .pdf-list { margin-top: 14px; display: grid; gap: 10px; }
+    .pdf-item {
+      display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+      padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+    }
+    .pdf-meta { flex: 1; min-width: 120px; font-size: 14px; font-weight: 600; }
+    .open-btn {
+      padding: 9px 16px; border-radius: 8px; border: none;
+      background: linear-gradient(90deg,#4fc3f7,#4dd0e1);
+      color: #042; font-weight: 700; font-size: 13px; cursor: pointer;
+    }
+    .modal-footer { margin-top: 14px; text-align: right; }
+    .sec-btn {
+      padding: 10px 18px; border-radius: 9px; background: transparent;
+      border: 1px solid var(--border); color: var(--text);
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .app-footer { text-align: center; padding: 18px; font-size: 11px; color: var(--muted); }
+
+    /* DEADLINE PAGE */
+    #deadlinePage {
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 15px;
+      background: radial-gradient(ellipse 900px 500px at 5% 0%, rgba(239,68,68,0.07), transparent 55%),
+                  radial-gradient(ellipse 700px 500px at 95% 100%, rgba(59,130,246,0.07), transparent 55%),
+                  linear-gradient(180deg, #08080e, #0d0f1a);
+      padding-bottom: 60px;
     }
-    .login-box {
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
+    .dl-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.01); backdrop-filter: blur(8px);
+      position: sticky; top: 0; z-index: 5; flex-wrap: wrap; gap: 12px;
     }
-    input {
-      width: calc(100% - 16px);
-      padding: 12px 8px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
+    .dl-header-left { display: flex; align-items: center; gap: 14px; }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text);
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s;
     }
-    button {
-      padding: 12px 24px;
-      background-color: #3b82f6;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      width: 100%;
+    .back-btn:hover { background: rgba(255,255,255,0.09); }
+    .dl-header h2 { font-size: clamp(15px,4vw,20px); font-weight: 800; letter-spacing: .5px; }
+    .admin-update-btn {
+      display: flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 8px;
+      background: linear-gradient(90deg,#f59e0b,#ef4444); color: #fff; border: none;
+      font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer;
+      letter-spacing: .4px; transition: filter .2s, transform .1s;
+      box-shadow: 0 4px 16px rgba(239,68,68,0.25);
     }
-    button:hover {
-      background-color: #2563eb;
+    .admin-update-btn:hover  { filter: brightness(1.1); }
+    .admin-update-btn:active { transform: scale(.97); }
+
+    .dl-stats {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      max-width: 960px; margin: 20px auto 4px; padding: 0 16px;
     }
-    .msg {
-      margin-top: 10px;
-      font-size: 14px;
+    .stat-card {
+      flex: 1; min-width: 110px; background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; text-align: center;
+    }
+    .stat-card .num { font-size: 28px; font-weight: 800; font-family: 'DM Mono', monospace; }
+    .stat-card .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: .5px; }
+
+    .dl-legend {
+      display: flex; gap: 20px; flex-wrap: wrap;
+      max-width: 960px; margin: 10px auto 0; padding: 0 16px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+    .legend-dot  { width: 10px; height: 10px; border-radius: 50%; }
+
+    .dl-table-wrap { max-width: 960px; margin: 20px auto; padding: 0 16px; }
+    .dl-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+    .dl-table thead th {
+      font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--muted); padding: 0 18px 6px;
+      text-align: left; border-bottom: 1px solid var(--border);
+    }
+    .dl-table tbody tr {
+      background: rgba(255,255,255,0.025); border-radius: 12px;
+      transition: background .2s, transform .18s;
+      animation: rowIn .35s ease both;
+    }
+    .dl-table tbody tr:hover { background: rgba(255,255,255,0.05); transform: translateX(3px); }
+    @keyframes rowIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .dl-table tbody td { padding: 16px 18px; font-size: 14px; vertical-align: middle; }
+    .dl-table tbody td:first-child { border-radius: 12px 0 0 12px; }
+    .dl-table tbody td:last-child  { border-radius: 0 12px 12px 0; }
+    .subject-name { font-weight: 700; font-size: 15px; }
+    .subject-code { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'DM Mono', monospace; }
+    .date-chip {
+      font-family: 'DM Mono', monospace; font-size: 13px; padding: 5px 10px; border-radius: 6px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: inline-block;
+    }
+    .date-chip.today { color: var(--gold); border-color: rgba(240,192,64,0.3); background: rgba(240,192,64,0.07); }
+    .status-badge {
+      padding: 5px 13px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      letter-spacing: .6px; text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace;
+    }
+    .status-open   { background: rgba(34,197,94,0.12);  color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+    .status-closed { background: rgba(239,68,68,0.12);  color: var(--red);   border: 1px solid rgba(239,68,68,0.25); }
+    .status-today  { background: rgba(245,158,11,0.12); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+    .days-left .num { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; color: var(--gold); }
+    .progress-bar-track { height: 4px; background: rgba(255,255,255,0.07); border-radius: 4px; margin-top: 6px; overflow: hidden; width: 100px; }
+    .progress-bar-fill  { height: 100%; border-radius: 4px; transition: width .4s; }
+
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; opacity: 0; pointer-events: none; transition: opacity .2s; padding: 20px;
+    }
+    .overlay.show { opacity: 1; pointer-events: auto; }
+    .overlay-box {
+      width: 100%; max-width: 420px; background: #111827;
+      border: 1px solid var(--border); border-radius: 14px; padding: 28px 26px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.7); animation: popIn .2s ease;
+    }
+    @keyframes popIn { from { transform:scale(.94); opacity:0; } to { transform:scale(1); opacity:1; } }
+    .overlay-box h3 { font-size: 17px; font-weight: 800; margin-bottom: 5px; }
+    .overlay-box p  { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+    .overlay-box input {
+      width: 100%; padding: 11px 14px; background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+      font-family: 'DM Mono', monospace; font-size: 14px; outline: none;
+      transition: border-color .2s; margin-bottom: 10px;
+    }
+    .overlay-box input:focus { border-color: var(--accent); }
+    .overlay-actions { display: flex; gap: 10px; margin-top: 6px; }
+    .overlay-actions button { flex: 1; padding: 11px; border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border: none; }
+    .btn-confirm { background: var(--accent); color: #fff; }
+    .btn-cancel  { background: rgba(255,255,255,0.07); color: var(--text); }
+    #authMsg { font-size: 12px; color: var(--red); min-height: 16px; }
+
+    .edit-panel { max-width: 960px; margin: 0 auto 24px; padding: 0 16px; }
+    .edit-box {
+      background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.18);
+      border-radius: 14px; padding: 20px 22px;
+    }
+    .edit-box h4 { font-size: 14px; font-weight: 700; margin-bottom: 14px; color: #93c5fd; letter-spacing: .4px; }
+    .edit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 14px; }
+    .edit-field label {
+      display: block; font-size: 11px; font-family: 'DM Mono', monospace;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px;
+    }
+    .edit-field input[type="date"] {
+      width: 100%; padding: 9px 12px; background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+      font-family: 'DM Mono', monospace; font-size: 13px; outline: none; transition: border-color .2s;
+    }
+    .edit-field input:focus { border-color: var(--accent); }
+    .edit-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .save-btn {
+      padding: 10px 22px; border-radius: 8px; background: var(--green); color: #111;
+      border: none; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: filter .2s;
+    }
+    .save-btn:hover { filter: brightness(1.1); }
+    .cancel-edit-btn {
+      padding: 10px 18px; border-radius: 8px; background: rgba(255,255,255,0.07);
+      color: var(--text); border: 1px solid var(--border);
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .admin-badge {
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px;
+      background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25);
+      color: var(--amber); font-size: 11px; font-weight: 700;
+      font-family: 'DM Mono', monospace; letter-spacing: .6px;
+    }
+    .logout-admin {
+      padding: 7px 13px; border-radius: 7px; background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2); color: var(--red);
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer;
     }
 
-    /* Hide ADCS page until login success */
-    #mainContent { display: none; }
+    @media (max-width:640px) {
+      .dl-table thead { display: none; }
+      .dl-table tbody, .dl-table tbody tr, .dl-table tbody td { display: block; }
+      .dl-table tbody tr { margin-bottom: 12px; border-radius: 12px; overflow: hidden; }
+      .dl-table tbody td { padding: 10px 16px; border-radius: 0 !important; }
+      .dl-table tbody td::before {
+        content: attr(data-label); display: block; font-size: 10px;
+        letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+        margin-bottom: 4px; font-family: 'DM Mono', monospace;
+      }
+      .progress-bar-track { width: 80px; }
+      .dl-header { padding: 14px 16px; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN BOX -->
-  <div class="login-box" id="loginBox">
-    <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username" /><br>
-    <input type="password" id="password" placeholder="Password" /><br>
-    <button onclick="login()">Login</button>
-    <div class="msg" id="msg"></div>
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-card">
+    <h2>ADCS Portal</h2>
+    <p>Sign in to access assignments &amp; deadlines</p>
+    <input type="text" id="loginUser" placeholder="Username" autocomplete="off" />
+    <input type="password" id="loginPass" placeholder="Password" />
+    <button onclick="doLogin()">Sign In</button>
+    <div id="loginMsg"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appPage">
+
+  <!-- HOME -->
+  <div id="homePage" class="page active">
+    <div class="app-header">
+      <h1>📄 ADCS Assignment</h1>
+      <p>Click a subject to see available PDFs by authors.</p>
+    </div>
+    <div class="cards-grid">
+      <div class="card" data-subject="OOP LAB">
+        <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#e53935"/><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+        <div class="card-title">OOP LAB</div>
+        <button class="card-btn" data-action="open">View PDF</button>
+      </div>
+      <div class="card" data-subject="OOP THEORY">
+        <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#d32f2f"/><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+        <div class="card-title">OOP THEORY</div>
+        <button class="card-btn" data-action="open">View PDF</button>
+      </div>
+      <div class="card" data-subject="WEB TECHNOLOGY LAB">
+        <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#c62828"/><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+        <div class="card-title">WEB TECHNOLOGY LAB</div>
+        <button class="card-btn" data-action="open">View PDF</button>
+      </div>
+      <div class="card" data-subject="DATABASE LAB">
+        <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#b71c1c"/><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+        <div class="card-title">DATABASE LAB</div>
+        <button class="card-btn" data-action="open">View PDF</button>
+      </div>
+      <div class="card" data-subject="ADCS NEWS">
+        <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#ad1457"/><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">DL</text></svg>
+        <div class="card-title">ADCS ASSIGNMENT DEADLINE</div>
+        <button class="card-btn deadline-btn" onclick="showDeadlinePage()">Show Details</button>
+      </div>
+    </div>
+    <footer class="app-footer">© 2025 ADCS Assignment</footer>
   </div>
 
-  <!-- ADCS PAGE CONTENT -->
-  <div id="mainContent">
-  <style>
-    :root{
-      --bg1:#0f172a;
-      --bg2:#0b1221;
-      --card: rgba(255,255,255,0.06);
-      --accent:#ff3b3b;
-      --gold:#ffd54a;
-      --glass: rgba(255,255,255,0.06);
-      --text:#e6eef8;
-    }
-    html,body{min-height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
-    body{
-      background: radial-gradient(1200px 600px at 10% 10%, rgba(102,126,234,0.15), transparent 8%),
-                  radial-gradient(1200px 600px at 90% 90%, rgba(99,102,241,0.12), transparent 8%),
-                  linear-gradient(180deg,var(--bg1),var(--bg2));
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
-
-    header{
-      text-align:center;
-      padding:24px 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      position:sticky;
-      top:0;
-      backdrop-filter: blur(6px);
-      z-index:5;
-    }
-    header h1{
-      margin:0;
-      font-size:clamp(20px, 5vw, 28px);
-      letter-spacing:1px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:center;
-    }
-    header p{margin:8px 0 0; opacity:0.8; font-size:clamp(13px, 3vw, 14px);}
-    .container{
-      max-width:1100px;
-      margin:20px auto;
-      padding:18px;
-      display:grid;
-      grid-template-columns: repeat(auto-fit,minmax(min(100%, 280px),1fr));
-      gap:18px;
-    }
-
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-      border-radius:14px;
-      padding:20px 18px;
-      box-shadow: 0 6px 18px rgba(2,6,23,0.6);
-      border: 1px solid rgba(255,255,255,0.04);
-      transition: transform .24s ease, box-shadow .24s;
-      text-align:center;
-    }
-    .card:hover{ transform: translateY(-4px); box-shadow: 0 18px 40px rgba(2,6,23,0.65);}
-
-    .pdf-icon{
-      width:clamp(64px, 15vw, 78px);
-      height:clamp(64px, 15vw, 78px);
-      margin: 0 auto 10px;
-      display:block;
-    }
-
-    .subject{
-      font-size:clamp(16px, 4vw, 18px);
-      margin:8px 0 12px;
-      font-weight:600;
-      line-height: 1.3;
-    }
-
-    .btn{
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      justify-content:center;
-      padding:12px 20px;
-      border-radius:999px;
-      background: linear-gradient(90deg,#ffd54a,#ffb74d);
-      color:#111;
-      text-decoration:none;
-      font-weight:700;
-      box-shadow: 0 6px 18px rgba(255,181,71,0.12);
-      border:none;
-      cursor:pointer;
-      font-size:15px;
-      width: 100%;
-      max-width: 200px;
-    }
-    .btn.secondary{
-      background: transparent;
-      color:var(--text);
-      border:1px solid rgba(255,255,255,0.06);
-      padding:10px 16px;
-      border-radius:10px;
-      font-weight:600;
-    }
-
-    footer{ text-align:center; padding:20px 18px; opacity:0.7; font-size:12px; margin-top:20px; line-height: 1.5;}
-
-    /* Modal */
-    .modal-backdrop{
-      position:fixed;
-      inset:0;
-      background: rgba(2,6,23,0.7);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:50;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .18s ease;
-      padding: 15px;
-      overflow-y: auto;
-    }
-    .modal-backdrop.show{ opacity:1; pointer-events:auto; }
-
-    .modal{
-      width: 100%;
-      max-width:760px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:12px;
-      padding:18px;
-      border:1px solid rgba(255,255,255,0.04);
-      box-shadow: 0 20px 60px rgba(2,6,23,0.7);
-      margin: auto;
-    }
-    .modal header{ 
-      display:flex; 
-      align-items:flex-start; 
-      gap:12px; 
-      justify-content:space-between; 
-      padding:0; 
-      background:transparent;
-      flex-wrap: wrap;
-    }
-    .modal h3{ margin:0; font-size:clamp(16px, 4vw, 18px); line-height: 1.3;}
-    .close-btn{ 
-      background:transparent; 
-      border:0; 
-      color:var(--text); 
-      font-size:24px; 
-      cursor:pointer; 
-      opacity:0.85;
-      padding: 4px 8px;
-      line-height: 1;
-      min-width: 32px;
-      min-height: 32px;
-    }
-    .pdf-list{ margin-top:14px; display:grid; gap:12px; }
-    .pdf-item{
-      display:flex; 
-      gap:12px; 
-      align-items:center;
-      padding:12px;
-      border-radius:10px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
-      border:1px solid rgba(255,255,255,0.03);
-      flex-wrap: wrap;
-    }
-    .pdf-thumb{ 
-      width:48px; 
-      height:60px; 
-      flex-shrink:0; 
-      display:flex; 
-      align-items:center; 
-      justify-content:center; 
-    }
-    .pdf-meta{ flex:1; min-width: 120px;}
-    .pdf-meta b{ display:block; font-size: 14px; word-break: break-word;}
-    .pdf-actions{ 
-      display:flex; 
-      gap:8px; 
-      align-items:center;
-      flex-wrap: wrap;
-    }
-    .small-btn{
-      padding:10px 14px; 
-      border-radius:8px; 
-      border:0; 
-      font-weight:700; 
-      cursor:pointer;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-    .open-btn{ background:linear-gradient(90deg,#4fc3f7,#4dd0e1); color:#042; }
-    .download-btn{ background:linear-gradient(90deg,#b39ddb,#9575cd); color:#111; }
-
-    .muted{ color:rgba(255,255,255,0.65); font-size:13px; }
-    
-    /* Mobile specific fixes */
-    @media (max-width:600px){
-      .container{
-        grid-template-columns: 1fr;
-        padding: 12px;
-        gap: 16px;
-      }
-      .card{
-        padding: 18px 16px;
-      }
-      .modal{
-        padding: 16px;
-        border-radius: 8px;
-      }
-      .pdf-item{
-        padding: 10px;
-      }
-      .pdf-actions{
-        width: 100%;
-        justify-content: flex-end;
-      }
-      .small-btn{
-        flex: 1;
-        min-width: 80px;
-      }
-      footer{
-        font-size: 11px;
-      }
-    }
-  </style>
-
-  <header>
-    <h1>ADCS Assignment</h1>
-    <p>Click a subject to see available PDFs by authors.</p>
-  </header>
-
-  <main class="container">
-    <!-- Cards without price -->
-    <div class="card" data-subject="Programming Fundamentals">
-      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#e53935"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
-      <div class="subject">Programming Fundamentals</div>
-      <button class="btn" data-action="open">View PDF</button>
+  <!-- DEADLINE PAGE -->
+  <div id="deadlinePage" class="page">
+    <div class="dl-header">
+      <div class="dl-header-left">
+        <button class="back-btn" onclick="goHome()">← Back</button>
+        <h2>Assignment Deadlines</h2>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;" id="adminHeaderArea">
+        <button class="admin-update-btn" onclick="openAuthOverlay()">🔐 Update ADMIN</button>
+      </div>
     </div>
 
-    <div class="card" data-subject="Digital Logic Design (DLD)">
-      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#d32f2f"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
-      <div class="subject">Digital Logic Design (DLD)</div>
-      <button class="btn" data-action="open">View PDF</button>
+    <div class="dl-stats" id="statsRow"></div>
+
+    <div class="dl-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Open</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Closed</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Due Today</div>
     </div>
 
-    <div class="card" data-subject="ICT">
-      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#c62828"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
-      <div class="subject">ICT</div>
-      <button class="btn" data-action="open">View PDF</button>
+    <div class="edit-panel" id="editPanel" style="display:none; margin-top:18px;">
+      <div class="edit-box">
+        <h4>✏️ ADMIN — Edit Deadlines &amp; Current Date</h4>
+        <div id="editGrid" class="edit-grid"></div>
+        <div class="edit-actions">
+          <button class="save-btn" onclick="saveEdits()">💾 Save Changes</button>
+          <button class="cancel-edit-btn" onclick="closeEditPanel()">Cancel</button>
+        </div>
+      </div>
     </div>
 
-    <div class="card" data-subject="Pakistan Ideology & Constitution">
-      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#b71c1c"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
-      <div class="subject">Pakistan Ideology & Constitution</div>
-      <button class="btn" data-action="open">View PDF</button>
+    <div class="dl-table-wrap">
+      <table class="dl-table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Deadline</th>
+            <th>Current Date</th>
+            <th>Status</th>
+            <th>Days Left</th>
+          </tr>
+        </thead>
+        <tbody id="deadlineTableBody"></tbody>
+      </table>
     </div>
+  </div>
 
-    <!-- NEW SECTION ADDED HERE -->
-    <div class="card" data-subject="ADCS NEWS">
-      <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#ad1457"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
-      <div class="subject">ADCS NEWS</div>
-      <button class="btn" data-action="open">View PDF</button>
-    </div>
-  </main>
-
-  <footer>© 2025 ADCS Assignment • </footer>
-
-  <!-- Modal -->
+  <!-- PDF MODAL -->
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal">
-      <header>
-        <div style="display:flex; gap:12px; align-items:flex-start; flex: 1;">
-          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;"><rect x="3" y="2" width="14" height="20" rx="2" fill="#e53935"></rect><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
-          <div style="flex: 1; min-width: 0;">
-            <h3 id="modalTitle">Subject PDFs</h3>
-            <div class="muted" id="modalSubtitle">Select a PDF to open or download</div>
-          </div>
-        </div>
+      <div class="modal-head">
         <div>
-          <button class="close-btn" id="closeModal">✕</button>
+          <h3 id="modalTitle">Subject PDFs</h3>
+          <div class="muted">Select a PDF to open</div>
         </div>
-      </header>
-
+        <button class="close-btn" onclick="closeModal()">✕</button>
+      </div>
       <div class="pdf-list" id="pdfList"></div>
-
-      <div style="margin-top:14px; text-align:right;">
-        <button class="btn secondary" id="closeModal2">Close</button>
+      <div class="modal-footer">
+        <button class="sec-btn" onclick="closeModal()">Close</button>
       </div>
     </div>
   </div>
-  <script>
-    // Allowed users
-    const users = {
-      "ahmad": "12345",
-      "admin": "adminpass",
-      "guest": "guest123"
-    };
 
-    function login() {
-      const user = document.getElementById("username").value.trim().toLowerCase();
-      const pass = document.getElementById("password").value.trim();
-      const msg = document.getElementById("msg");
+  <!-- ADMIN AUTH OVERLAY -->
+  <div class="overlay" id="authOverlay">
+    <div class="overlay-box">
+      <h3>🔐 Admin Authentication</h3>
+      <p>Enter the admin password to edit deadlines.</p>
+      <input type="password" id="adminPassInput" placeholder="Admin password"
+             onkeydown="if(event.key==='Enter') confirmAuth()" />
+      <div id="authMsg"></div>
+      <div class="overlay-actions">
+        <button class="btn-confirm" onclick="confirmAuth()">Confirm</button>
+        <button class="btn-cancel"  onclick="closeAuthOverlay()">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-      if (users[user] && users[user] === pass) {
-        msg.style.color = "lightgreen";
-        msg.textContent = "✅ Login successful!";
-
-        // Show main content and hide login box
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("mainContent").style.display = "block";
-      } else {
-        msg.style.color = "red";
-        msg.textContent = "❌ Invalid username or password";
-      }
-    }
-  </script>
-
-  <script>
-    // Function to convert Google Drive folder links to viewable format
-    function convertDriveLink(url) {
-      // Check if it's a Google Drive folder link
-      if (url.includes('drive.google.com/drive/folders/')) {
-        // Extract folder ID
-        const match = url.match(/folders\/([a-zA-Z0-9_-]+)/);
-        if (match && match[1]) {
-          const folderId = match[1];
-          // Return folder view link that opens in browser
-          return `https://drive.google.com/embeddedfolderview?id=${folderId}#list`;
-        }
-      }
-      return url;
-    }
-
-    const pdfDatabase = {
-      "Programming Fundamentals":[
-        {author:"Admin", url:"https://drive.google.com/drive/folders/1Q9zJVfFYc0A8lrxAEpAiHf51DBQzawVx?usp=drive_link"},
-      ],
-      "Digital Logic Design (DLD)":[
-        {author:"Admin", url:"https://drive.google.com/drive/folders/1PGj_PiELOaIeolmJ4KqDbedW0cFyuQ3b?usp=drive_link"},
-      ],
-      "ICT":[
-        {author:"Admin", url:"https://drive.google.com/drive/folders/1Ze6UhDptkGdJYlwkRFWaU6r_irID_4Mj?usp=drive_link"},
-      ],
-      "Pakistan Ideology & Constitution":[
-        {author:"Admin", url:"https://drive.google.com/drive/folders/1mml6ZOvISNPjpFvQZc7cJcPTi4bEIlQn?usp=sharing"},
-      ],
-      // NEW SUBJECT ADDED HERE
-      "ADCS NEWS":[
-        {author:"Admin", url:"https://drive.google.com/drive/folders/19fHKIG0Q7BAnTiP9EebRnAidvBa99DqM?usp=sharing"},
-      ],
-    };
-
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const pdfList = document.getElementById('pdfList');
-    const modalTitle = document.getElementById('modalTitle');
-
-    function openModalFor(subject){
-      const records = pdfDatabase[subject] || [];
-      modalTitle.textContent = subject + " — Available PDFs";
-      pdfList.innerHTML = '';
-      records.forEach(rec => {
-        const item = document.createElement('div');
-        item.className = 'pdf-item';
-        const thumb = document.createElement('div');
-        thumb.className = 'pdf-thumb';
-        thumb.innerHTML = `<svg width="48" height="60" viewBox="0 0 24 24" fill="none">
-          <rect x="1" y="1" width="16" height="22" rx="2" fill="#d32f2f"></rect>
-          <text x="9" y="12" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text>
-        </svg>`;
-        const meta = document.createElement('div');
-        meta.className = 'pdf-meta';
-        meta.innerHTML = `<b>PDF by ${rec.author}</b>`;
-        const actions = document.createElement('div');
-        actions.className = 'pdf-actions';
-        
-        // Convert Drive links before using them
-        const convertedUrl = convertDriveLink(rec.url);
-        
-        const openBtn = document.createElement('button');
-        openBtn.className = 'small-btn open-btn';
-        openBtn.textContent = 'Open';
-        openBtn.onclick = function() {
-          window.location.href = convertedUrl;
-        };
-        
-        actions.appendChild(openBtn);
-        item.appendChild(thumb); 
-        item.appendChild(meta); 
-        item.appendChild(actions);
-        pdfList.appendChild(item);
-      });
-      modalBackdrop.classList.add('show');
-    }
-
-    function closeModal(){ modalBackdrop.classList.remove('show'); }
-
-    document.querySelectorAll('.card').forEach(card=>{
-      const btn = card.querySelector('[data-action="open"]');
-      btn.addEventListener('click', ()=> openModalFor(card.getAttribute('data-subject')));
-    });
-
-    document.getElementById('closeModal').addEventListener('click', closeModal);
-    document.getElementById('closeModal2').addEventListener('click', closeModal);
-    modalBackdrop.addEventListener('click', (e)=>{ if(e.target===modalBackdrop) closeModal(); });
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
-  </script>
 </div>
+
+<script>
+/* ─── DATA ─── */
+const USERS      = { ahmad:"12345", admin:"adminpass", guest:"guest123" };
+const ADMIN_PASS = "adminpass";
+
+let subjects = [
+  { name:"OOP LAB",             code:"CS-101L", deadline:"2025-07-20", currentDate:todayStr() },
+  { name:"OOP THEORY",          code:"CS-101T", deadline:"2025-07-22", currentDate:todayStr() },
+  { name:"WEB TECHNOLOGY LAB",  code:"CS-103L", deadline:"2025-07-18", currentDate:todayStr() },
+  { name:"DATABASE LAB",        code:"CS-104L", deadline:"2025-07-25", currentDate:todayStr() },
+];
+
+let currentUser   = null;
+let adminUnlocked = false;
+
+/* ─── HELPERS ─── */
+function todayStr() { return new Date().toISOString().split("T")[0]; }
+function parseDate(s) { const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+function diffDays(dl,cd) { return Math.round((parseDate(dl)-parseDate(cd))/86400000); }
+function formatDate(s) { return parseDate(s).toLocaleDateString("en-US",{day:"numeric",month:"short",year:"numeric"}); }
+function getStatus(sub) {
+  const d = diffDays(sub.deadline, sub.currentDate);
+  return d < 0 ? "closed" : d === 0 ? "today" : "open";
+}
+
+/* ─── LOGIN ─── */
+function doLogin() {
+  const u   = document.getElementById("loginUser").value.trim().toLowerCase();
+  const p   = document.getElementById("loginPass").value.trim();
+  const msg = document.getElementById("loginMsg");
+  if (USERS[u] && USERS[u] === p) {
+    currentUser = u;
+    msg.style.color = "#22c55e";
+    msg.textContent = "✅ Login successful!";
+    setTimeout(() => {
+      document.getElementById("loginPage").style.display = "none";
+      document.getElementById("appPage").style.display   = "block";
+    }, 400);
+  } else {
+    msg.style.color = "#ef4444";
+    msg.textContent = "❌ Invalid username or password.";
+  }
+}
+document.getElementById("loginPass").addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); });
+
+/* ─── PAGE NAV ─── */
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+function goHome()           { showPage("homePage"); }
+function showDeadlinePage() { renderDeadlineTable(); showPage("deadlinePage"); }
+
+/* ─── RENDER TABLE ─── */
+function renderDeadlineTable() {
+  const tbody = document.getElementById("deadlineTableBody");
+  tbody.innerHTML = "";
+  let open=0, closed=0, today=0;
+
+  subjects.forEach((sub, i) => {
+    const status = getStatus(sub);
+    const diff   = diffDays(sub.deadline, sub.currentDate);
+    if (status==="open")   open++;
+    if (status==="closed") closed++;
+    if (status==="today")  today++;
+
+    const totalWindow = 30;
+    const pct = status==="closed"||status==="today" ? 100
+              : Math.min(100, Math.round(((totalWindow-diff)/totalWindow)*100));
+    const barColor = status==="closed" ? "var(--red)"
+                   : status==="today"  ? "var(--amber)"
+                   : diff<=5           ? "var(--amber)" : "var(--green)";
+
+    const statusHtml =
+      status==="open"   ? `<span class="status-badge status-open">● Open</span>`
+    : status==="today"  ? `<span class="status-badge status-today">● Due Today</span>`
+    :                     `<span class="status-badge status-closed">● Closed</span>`;
+
+    const daysHtml =
+      status==="closed" ? `<span style="color:var(--red);font-family:'DM Mono',monospace;font-size:13px;">Expired</span>`
+    : status==="today"  ? `<span style="color:var(--amber);font-family:'DM Mono',monospace;font-size:13px;">Last Day!</span>`
+    : `<div class="days-left"><span class="num">${diff}</span> days
+         <div class="progress-bar-track">
+           <div class="progress-bar-fill" style="width:${pct}%;background:${barColor}"></div>
+         </div>
+       </div>`;
+
+    const tr = document.createElement("tr");
+    tr.style.animationDelay = `${i*0.06}s`;
+    tr.innerHTML = `
+      <td data-label="Subject">
+        <div class="subject-name">${sub.name}</div>
+        <div class="subject-code">${sub.code}</div>
+      </td>
+      <td data-label="Deadline"><span class="date-chip">${formatDate(sub.deadline)}</span></td>
+      <td data-label="Current Date"><span class="date-chip today">${formatDate(sub.currentDate)}</span></td>
+      <td data-label="Status">${statusHtml}</td>
+      <td data-label="Days Left">${daysHtml}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById("statsRow").innerHTML = `
+    <div class="stat-card"><div class="num" style="color:var(--green)">${open}</div><div class="lbl">OPEN</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--red)">${closed}</div><div class="lbl">CLOSED</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--amber)">${today}</div><div class="lbl">DUE TODAY</div></div>
+    <div class="stat-card"><div class="num">${subjects.length}</div><div class="lbl">TOTAL</div></div>
+  `;
+}
+
+/* ─── ADMIN AUTH ─── */
+function openAuthOverlay() {
+  if (adminUnlocked) { openEditPanel(); return; }
+  document.getElementById("adminPassInput").value = "";
+  document.getElementById("authMsg").textContent  = "";
+  document.getElementById("authOverlay").classList.add("show");
+  setTimeout(() => document.getElementById("adminPassInput").focus(), 200);
+}
+function closeAuthOverlay() { document.getElementById("authOverlay").classList.remove("show"); }
+function confirmAuth() {
+  const val = document.getElementById("adminPassInput").value.trim();
+  if (val === ADMIN_PASS) {
+    adminUnlocked = true;
+    closeAuthOverlay();
+    openEditPanel();
+  } else {
+    document.getElementById("authMsg").textContent = "❌ Wrong password. Try again.";
+    document.getElementById("adminPassInput").value = "";
+    document.getElementById("adminPassInput").focus();
+  }
+}
+
+/* ─── EDIT PANEL ─── */
+function openEditPanel() {
+  const area = document.getElementById("adminHeaderArea");
+  area.innerHTML = `
+    <span class="admin-badge">🔓 ADMIN MODE</span>
+    <button class="logout-admin" onclick="logoutAdmin()">🔒 Lock</button>
+  `;
+  const grid = document.getElementById("editGrid");
+  grid.innerHTML = "";
+  subjects.forEach((sub, i) => {
+    grid.innerHTML += `
+      <div class="edit-field">
+        <label>${sub.name} — Deadline</label>
+        <input type="date" id="edit_deadline_${i}" value="${sub.deadline}" />
+      </div>
+      <div class="edit-field">
+        <label>${sub.name} — Current Date</label>
+        <input type="date" id="edit_current_${i}" value="${sub.currentDate}" />
+      </div>
+    `;
+  });
+  document.getElementById("editPanel").style.display = "block";
+  document.getElementById("editPanel").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+function closeEditPanel() { document.getElementById("editPanel").style.display = "none"; }
+function saveEdits() {
+  subjects.forEach((sub, i) => {
+    const dl = document.getElementById(`edit_deadline_${i}`).value;
+    const cd = document.getElementById(`edit_current_${i}`).value;
+    if (dl) sub.deadline    = dl;
+    if (cd) sub.currentDate = cd;
+  });
+  closeEditPanel();
+  renderDeadlineTable();
+  const btn = document.querySelector(".save-btn");
+  const orig = btn.textContent;
+  btn.textContent = "✅ Saved!";
+  setTimeout(() => btn.textContent = orig, 1600);
+}
+function logoutAdmin() {
+  adminUnlocked = false;
+  closeEditPanel();
+  document.getElementById("adminHeaderArea").innerHTML =
+    `<button class="admin-update-btn" onclick="openAuthOverlay()">🔐 Update ADMIN</button>`;
+}
+
+/* ─── PDF MODAL ─────────────────────────────────────────────────────────────
+   FIX: Removed the convertDriveLink() function that was mangling share URLs
+   into broken embeddedfolderview links. Now we open the original sharing URL
+   directly in a new tab using window.open(..., '_blank').
+   ─────────────────────────────────────────────────────────────────────────── */
+const pdfDatabase = {
+  "OOP LAB":            [{ author:"Admin", url:"https://drive.google.com/drive/folders/1ld9LvYwh5_r8iyVZ7hZe6n0kHy3m5bGN?usp=sharing" }],
+  "OOP THEORY":         [{ author:"Admin", url:"https://drive.google.com/drive/folders/1qKZ3AA_1xqUKjv3Uk2MNFkK7hmJi5Mi2?usp=sharing" }],
+  "WEB TECHNOLOGY LAB": [{ author:"Admin", url:"https://drive.google.com/drive/folders/1NpREq4By2dAJcxxuzJc7oKgmERVaFEZz?usp=sharing" }],
+  "DATABASE LAB":       [{ author:"Admin", url:"https://drive.google.com/drive/folders/1ez2ZwNDL9JGXs2eIJpJOSIumjoG6Vjcq?usp=sharing" }],
+  "ADCS NEWS":          [{ author:"Admin", url:"https://drive.google.com/drive/folders/19fHKIG0Q7BAnTiP9EebRnAidvBa99DqM?usp=sharing" }],
+};
+
+function openModal(subject) {
+  const records = pdfDatabase[subject] || [];
+  document.getElementById("modalTitle").textContent = subject + " — Available PDFs";
+  const list = document.getElementById("pdfList");
+  list.innerHTML = "";
+  records.forEach(rec => {
+    const item = document.createElement("div");
+    item.className = "pdf-item";
+    // FIX: use window.open with _blank instead of window.location.href
+    // This opens the original Drive sharing URL in a new tab correctly
+    item.innerHTML = `
+      <svg width="40" height="50" viewBox="0 0 24 24" fill="none">
+        <rect x="1" y="1" width="16" height="22" rx="2" fill="#d32f2f"/>
+        <text x="9" y="12" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text>
+      </svg>
+      <div class="pdf-meta">PDF by ${rec.author}</div>
+      <button class="open-btn" onclick="window.open('${rec.url}', '_blank', 'noopener,noreferrer')">Open</button>
+    `;
+    list.appendChild(item);
+  });
+  document.getElementById("modalBackdrop").classList.add("show");
+}
+
+function closeModal() { document.getElementById("modalBackdrop").classList.remove("show"); }
+
+document.querySelectorAll(".card[data-subject]").forEach(card => {
+  const btn = card.querySelector("[data-action='open']");
+  if (btn) btn.addEventListener("click", () => openModal(card.dataset.subject));
+});
+document.getElementById("modalBackdrop").addEventListener("click", e => {
+  if (e.target === document.getElementById("modalBackdrop")) closeModal();
+});
+document.addEventListener("keydown", e => { if(e.key==="Escape") { closeModal(); closeAuthOverlay(); } });
+</script>
 </body>
 </html>
