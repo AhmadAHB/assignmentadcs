@@ -162,7 +162,7 @@
 
     .dl-stats {
       display: flex; gap: 14px; flex-wrap: wrap;
-      max-width: 960px; margin: 20px auto 4px; padding: 0 16px;
+      max-width: 1080px; margin: 20px auto 4px; padding: 0 16px;
     }
     .stat-card {
       flex: 1; min-width: 110px; background: rgba(255,255,255,0.025);
@@ -173,13 +173,13 @@
 
     .dl-legend {
       display: flex; gap: 20px; flex-wrap: wrap;
-      max-width: 960px; margin: 10px auto 0; padding: 0 16px;
+      max-width: 1080px; margin: 10px auto 0; padding: 0 16px;
     }
     .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
     .legend-dot  { width: 10px; height: 10px; border-radius: 50%; }
 
-    .dl-table-wrap { max-width: 960px; margin: 20px auto; padding: 0 16px; }
-    .dl-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+    .dl-table-wrap { max-width: 1080px; margin: 20px auto; padding: 0 16px; overflow-x: auto; }
+    .dl-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; min-width: 700px; }
     .dl-table thead th {
       font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: 1.5px;
       text-transform: uppercase; color: var(--muted); padding: 0 18px 6px;
@@ -210,6 +210,17 @@
     .status-open   { background: rgba(34,197,94,0.12);  color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
     .status-closed { background: rgba(239,68,68,0.12);  color: var(--red);   border: 1px solid rgba(239,68,68,0.25); }
     .status-today  { background: rgba(245,158,11,0.12); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+
+    /* Upload status badges */
+    .upload-badge {
+      padding: 5px 13px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      letter-spacing: .6px; text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace;
+      white-space: nowrap;
+    }
+    .upload-yes    { background: rgba(34,197,94,0.12);  color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+    .upload-notyet { background: rgba(245,158,11,0.12); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+
     .days-left .num { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; color: var(--gold); }
     .progress-bar-track { height: 4px; background: rgba(255,255,255,0.07); border-radius: 4px; margin-top: 6px; overflow: hidden; width: 100px; }
     .progress-bar-fill  { height: 100%; border-radius: 4px; transition: width .4s; }
@@ -241,7 +252,7 @@
     .btn-cancel  { background: rgba(255,255,255,0.07); color: var(--text); }
     #authMsg { font-size: 12px; color: var(--red); min-height: 16px; }
 
-    .edit-panel { max-width: 960px; margin: 0 auto 24px; padding: 0 16px; }
+    .edit-panel { max-width: 1080px; margin: 0 auto 24px; padding: 0 16px; }
     .edit-box {
       background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.18);
       border-radius: 14px; padding: 20px 22px;
@@ -252,12 +263,14 @@
       display: block; font-size: 11px; font-family: 'DM Mono', monospace;
       letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px;
     }
-    .edit-field input[type="date"] {
+    .edit-field input[type="date"],
+    .edit-field select {
       width: 100%; padding: 9px 12px; background: rgba(255,255,255,0.05);
       border: 1px solid var(--border); border-radius: 8px; color: var(--text);
       font-family: 'DM Mono', monospace; font-size: 13px; outline: none; transition: border-color .2s;
     }
-    .edit-field input:focus { border-color: var(--accent); }
+    .edit-field select option { background: #111827; color: var(--text); }
+    .edit-field input:focus, .edit-field select:focus { border-color: var(--accent); }
     .edit-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
     .save-btn {
       padding: 10px 22px; border-radius: 8px; background: var(--green); color: #111;
@@ -282,17 +295,9 @@
       font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer;
     }
 
-    @media (max-width:640px) {
-      .dl-table thead { display: none; }
-      .dl-table tbody, .dl-table tbody tr, .dl-table tbody td { display: block; }
-      .dl-table tbody tr { margin-bottom: 12px; border-radius: 12px; overflow: hidden; }
-      .dl-table tbody td { padding: 10px 16px; border-radius: 0 !important; }
-      .dl-table tbody td::before {
-        content: attr(data-label); display: block; font-size: 10px;
-        letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
-        margin-bottom: 4px; font-family: 'DM Mono', monospace;
-      }
-      .progress-bar-track { width: 80px; }
+    @media (max-width:700px) {
+      .dl-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .dl-table { min-width: 680px; }
       .dl-header { padding: 14px 16px; }
     }
   </style>
@@ -341,16 +346,20 @@
         <div class="card-title">DATABASE LAB</div>
         <button class="card-btn" data-action="open">View PDF</button>
       </div>
-      <!-- NEW: COAL THEORY -->
       <div class="card" data-subject="COAL THEORY">
         <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#6d28d9"/><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
         <div class="card-title">COAL THEORY</div>
         <button class="card-btn" data-action="open">View PDF</button>
       </div>
-      <!-- NEW: COAL LAB -->
       <div class="card" data-subject="COAL LAB">
         <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#5b21b6"/><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
         <div class="card-title">COAL LAB</div>
+        <button class="card-btn" data-action="open">View PDF</button>
+      </div>
+      <!-- NEW: DISCRETE MATH -->
+      <div class="card" data-subject="DISCRETE MATH">
+        <svg class="pdf-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="2" width="14" height="20" rx="2" fill="#0e7490"/><text x="10" y="14" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">PDF</text></svg>
+        <div class="card-title">DISCRETE MATH</div>
         <button class="card-btn" data-action="open">View PDF</button>
       </div>
       <div class="card" data-subject="ADCS NEWS">
@@ -384,7 +393,7 @@
 
     <div class="edit-panel" id="editPanel" style="display:none; margin-top:18px;">
       <div class="edit-box">
-        <h4>✏️ ADMIN — Edit Deadlines &amp; Current Date</h4>
+        <h4>✏️ ADMIN — Edit Deadlines, Current Date &amp; Upload Status</h4>
         <div id="editGrid" class="edit-grid"></div>
         <div class="edit-actions">
           <button class="save-btn" onclick="saveEdits()">💾 Save Changes</button>
@@ -402,6 +411,7 @@
             <th>Current Date</th>
             <th>Status</th>
             <th>Days Left</th>
+            <th>Uploaded on Website</th>
           </tr>
         </thead>
         <tbody id="deadlineTableBody"></tbody>
@@ -449,12 +459,13 @@ const USERS      = { ahmad:"12345", admin:"adminpass", guest:"guest123" };
 const ADMIN_PASS = "adminpass";
 
 let subjects = [
-  { name:"OOP LAB",             code:"CS-101L", deadline:"2026-04-15", currentDate:"2026-04-18" },
-  { name:"OOP THEORY",          code:"CS-101T", deadline:"2026-04-17", currentDate:"2026-04-18" },
-  { name:"WEB TECHNOLOGY LAB",  code:"CS-103L", deadline:"2026-04-17", currentDate:"2026-04-18" },
-  { name:"DATABASE LAB",        code:"CS-104L", deadline:"2026-04-21", currentDate:"2026-04-18" },
-  { name:"COAL THEORY",         code:"CS-105T", deadline:"2026-04-20", currentDate:"2026-04-18" },
-  { name:"COAL LAB",            code:"CS-105L", deadline:"2026-04-18", currentDate:"2026-04-18" },
+  { name:"OOP LAB",             code:"CS-101L", deadline:"2026-04-15", currentDate:"2026-04-18", uploaded:false },
+  { name:"OOP THEORY",          code:"CS-101T", deadline:"2026-04-17", currentDate:"2026-04-18", uploaded:true  },
+  { name:"WEB TECHNOLOGY LAB",  code:"CS-103L", deadline:"2026-04-17", currentDate:"2026-04-18", uploaded:true  },
+  { name:"DATABASE LAB",        code:"CS-104L", deadline:"2026-04-21", currentDate:"2026-04-18", uploaded:false },
+  { name:"COAL THEORY",         code:"CS-105T", deadline:"2026-04-20", currentDate:"2026-04-18", uploaded:false },
+  { name:"COAL LAB",            code:"CS-105L", deadline:"2026-04-18", currentDate:"2026-04-18", uploaded:false },
+  { name:"DISCRETE MATH",       code:"CS-106T", deadline:"2026-04-22", currentDate:"2026-04-18", uploaded:false },
 ];
 
 let currentUser   = null;
@@ -532,6 +543,10 @@ function renderDeadlineTable() {
          </div>
        </div>`;
 
+    const uploadHtml = sub.uploaded
+      ? `<span class="upload-badge upload-yes">✓ Yes</span>`
+      : `<span class="upload-badge upload-notyet">⏳ Not Yet</span>`;
+
     const tr = document.createElement("tr");
     tr.style.animationDelay = `${i*0.06}s`;
     tr.innerHTML = `
@@ -543,6 +558,7 @@ function renderDeadlineTable() {
       <td data-label="Current Date"><span class="date-chip today">${formatDate(sub.currentDate)}</span></td>
       <td data-label="Status">${statusHtml}</td>
       <td data-label="Days Left">${daysHtml}</td>
+      <td data-label="Uploaded on Website">${uploadHtml}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -596,6 +612,13 @@ function openEditPanel() {
         <label>${sub.name} — Current Date</label>
         <input type="date" id="edit_current_${i}" value="${sub.currentDate}" />
       </div>
+      <div class="edit-field">
+        <label>${sub.name} — Uploaded?</label>
+        <select id="edit_upload_${i}">
+          <option value="yes" ${sub.uploaded ? "selected" : ""}>Yes</option>
+          <option value="no"  ${!sub.uploaded ? "selected" : ""}>Not Yet</option>
+        </select>
+      </div>
     `;
   });
   document.getElementById("editPanel").style.display = "block";
@@ -604,10 +627,12 @@ function openEditPanel() {
 function closeEditPanel() { document.getElementById("editPanel").style.display = "none"; }
 function saveEdits() {
   subjects.forEach((sub, i) => {
-    const dl = document.getElementById(`edit_deadline_${i}`).value;
-    const cd = document.getElementById(`edit_current_${i}`).value;
+    const dl  = document.getElementById(`edit_deadline_${i}`).value;
+    const cd  = document.getElementById(`edit_current_${i}`).value;
+    const up  = document.getElementById(`edit_upload_${i}`).value;
     if (dl) sub.deadline    = dl;
     if (cd) sub.currentDate = cd;
+    sub.uploaded = (up === "yes");
   });
   closeEditPanel();
   renderDeadlineTable();
@@ -631,6 +656,7 @@ const pdfDatabase = {
   "DATABASE LAB":       [{ author:"Admin", url:"https://drive.google.com/drive/folders/1ez2ZwNDL9JGXs2eIJpJOSIumjoG6Vjcq?usp=sharing" }],
   "COAL THEORY":        [{ author:"Admin", url:"https://drive.google.com/drive/folders/163YzNg4ZKSPVSVQtlmY46qtOBv_TZNlb?usp=sharing" }],
   "COAL LAB":           [{ author:"Admin", url:"https://drive.google.com/drive/folders/1i4BDIQOcIYI3fds59LR1_XF4d_lKFFix?usp=sharing" }],
+  "DISCRETE MATH":      [{ author:"Admin", url:"https://drive.google.com/drive/folders/1i4BDIQOcIYI3fds59LR1_XF4d_lKFFix?usp=sharing" }],
   "ADCS NEWS":          [{ author:"Admin", url:"https://drive.google.com/drive/folders/1i4BDIQOcIYI3fds59LR1_XF4d_lKFFix?usp=sharing" }],
 };
 
